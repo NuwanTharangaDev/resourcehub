@@ -96,3 +96,9 @@ export async function setResourceActive(id: string, isActive: boolean) {
     throw saveError(error);
   }
 }
+export function listResourceOptions() {
+  return prisma.resource.findMany({
+    orderBy: { name: "asc" },
+    select: { id: true, name: true },
+  });
+}

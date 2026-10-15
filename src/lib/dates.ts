@@ -26,3 +26,10 @@ export function formatDateTime(date: Date) {
     timeStyle: "short",
   }).format(date);
 }
+export function formatTime(date: Date) {
+  return new Intl.DateTimeFormat("en-GB", { timeZone: zone, timeStyle: "short" }).format(date);
+}
+
+export function isValidDate(value?: string) {
+  return Boolean(value) && /^\d{4}-\d{2}-\d{2}$/.test(value!) && !Number.isNaN(new Date(`${value}T00:00:00Z`).getTime());
+}

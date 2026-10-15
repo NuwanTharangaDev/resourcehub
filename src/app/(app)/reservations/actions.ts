@@ -1,10 +1,12 @@
 "use server";
 
+"use server";
+
 import { revalidatePath } from "next/cache";
 import { requireUser } from "@/lib/session";
 import { AppError, type FormState } from "@/lib/errors";
 import { reservationSchema } from "@/lib/validations";
-import { createReservation } from "@/services/reservation-service";
+import { cancelReservation, createReservation } from "@/services/reservation-service";
 
 export async function createReservationAction(_prev: FormState | undefined, formData: FormData): Promise<FormState> {
   const user = await requireUser();
@@ -31,4 +33,20 @@ export async function createReservationAction(_prev: FormState | undefined, form
   revalidatePath("/dashboard");
   revalidatePath("/availability");
   return { success: "Reservation confirmed." };
+}
+export async function cancelReservationAction(id: string): Promise<FormState> {
+  const user = await requireUser();
+
+  try {
+    await cancelReservation(id, user);
+  } catch (error) {
+    if (error instanceof AppError) return { error: error.message };
+    throw error;
+  }
+
+  revalidatePath("/reservations", "layout");
+  revalidatePath("/resources", "layout");
+  revalidatePath("/dashboard");
+  revalidatePath("/availability");
+  return { success: "Reservation cancelled." };
 }

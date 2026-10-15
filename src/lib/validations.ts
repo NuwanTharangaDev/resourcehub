@@ -20,7 +20,7 @@ export const resourceSchema = z.object({
   category: z.enum(categories),
   location: z.string().trim().min(2, "Enter a location").max(120, "Location is too long"),
   description: z.string().trim().max(500, "Description is too long").optional(),
-  capacity: z.number().int("Capacity must be a whole number").min(1, "Capacity must be at least 1").max(1000, "Capacity is too large").optional(),
+  capacity: z.number({ invalid_type_error: "Capacity must be a number" }).int("Capacity must be a whole number").min(1, "Capacity must be at least 1").max(1000, "Capacity is too large").optional(),
 });
 
 export const reservationSchema = z

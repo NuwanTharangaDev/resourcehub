@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Plus } from "lucide-react";
+import { CalendarDays, CheckCircle2, Clock, Package, Plus } from "lucide-react";
 import { requireUser } from "@/lib/session";
 import { formatDateTime } from "@/lib/dates";
 import { primaryButton, secondaryButton } from "@/lib/ui";
@@ -7,11 +7,23 @@ import { markFinishedReservations } from "@/services/reservation-service";
 import { getDashboardData } from "@/services/dashboard-service";
 import { StatusBadge } from "@/components/badges";
 
-function StatCard({ label, value, note }: { label: string; value: string | number; note?: string }) {
+type StatCardProps = {
+  label: string;
+  value: string | number;
+  note?: string;
+  icon: React.ComponentType<{ className?: string }>;
+};
+
+function StatCard({ label, value, note, icon: Icon }: StatCardProps) {
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-5">
-      <p className="text-sm text-slate-600">{label}</p>
-      <p className="mt-1 text-3xl font-bold text-slate-900">{value}</p>
+    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="flex items-center justify-between">
+        <p className="text-sm font-medium text-slate-600">{label}</p>
+        <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 text-blue-700">
+          <Icon className="h-4 w-4" aria-hidden="true" />
+        </span>
+      </div>
+      <p className="mt-3 text-3xl font-semibold tracking-tight text-slate-900">{value}</p>
       {note && <p className="mt-1 text-xs text-slate-600">{note}</p>}
     </div>
   );
@@ -26,7 +38,7 @@ export default async function DashboardPage() {
     <div>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Welcome back, {user.name}</h1>
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Welcome back, {user.name}</h1>
           <p className="text-sm text-slate-600">Here is what is happening with your shared resources.</p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -43,10 +55,11 @@ export default async function DashboardPage() {
       </div>
 
       <div className="mb-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard label="Active resources" value={data.activeResources} />
-        <StatCard label="Reservations today" value={data.todayCount} note="Excluding cancelled" />
-        <StatCard label="Upcoming confirmed" value={data.upcomingCount} />
+        <StatCard icon={Package} label="Active resources" value={data.activeResources} />
+        <StatCard icon={CalendarDays} label="Reservations today" value={data.todayCount} note="Excluding cancelled" />
+        <StatCard icon={Clock} label="Upcoming confirmed" value={data.upcomingCount} />
         <StatCard
+          icon={CheckCircle2}
           label="Free right now"
           value={`${data.freeNow} of ${data.activeResources}`}
           note="Active resources with no booking in progress"
@@ -57,16 +70,16 @@ export default async function DashboardPage() {
         <section className="lg:col-span-2">
           <h2 className="mb-3 text-lg font-semibold text-slate-900">Upcoming reservations</h2>
           {data.upcoming.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-slate-300 bg-white p-8 text-center text-sm text-slate-600">
+            <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center text-sm text-slate-600">
               Nothing is booked yet.{" "}
               <Link href="/reservations/new" className="font-medium text-blue-700 underline">
                 Create a reservation
               </Link>
             </div>
           ) : (
-            <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
+            <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
               <table className="w-full text-left text-sm">
-                <thead className="border-b border-slate-200 bg-slate-50 text-slate-700">
+                <thead className="border-b border-slate-200 bg-slate-50 text-xs uppercase tracking-wide text-slate-600">
                   <tr>
                     <th scope="col" className="px-4 py-3 font-medium">Title</th>
                     <th scope="col" className="px-4 py-3 font-medium">Resource</th>
@@ -74,7 +87,7 @@ export default async function DashboardPage() {
                     <th scope="col" className="px-4 py-3 font-medium">Booked by</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-slate-100 [&>tr:hover]:bg-slate-50">
                   {data.upcoming.map((item) => (
                     <tr key={item.id}>
                       <td className="px-4 py-3">
@@ -96,11 +109,11 @@ export default async function DashboardPage() {
         <section>
           <h2 className="mb-3 text-lg font-semibold text-slate-900">Recent activity</h2>
           {data.recent.length === 0 ? (
-            <p className="rounded-xl border border-dashed border-slate-300 bg-white p-6 text-sm text-slate-600">
+            <p className="rounded-2xl border border-dashed border-slate-300 bg-white p-6 text-sm text-slate-600">
               No activity yet.
             </p>
           ) : (
-            <ul className="divide-y divide-slate-100 rounded-xl border border-slate-200 bg-white">
+            <ul className="divide-y divide-slate-100 rounded-2xl border border-slate-200 bg-white shadow-sm">
               {data.recent.map((item) => (
                 <li key={item.id} className="px-4 py-3 text-sm">
                   <div className="flex items-center justify-between gap-2">

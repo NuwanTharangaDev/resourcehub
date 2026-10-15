@@ -1,6 +1,6 @@
 # ResourceHub: Resource Reservation Management System
 
-A full-stack web application for managing shared rooms and equipment and booking them without double bookings. Built for the PrimeWave Lab (Pvt) Ltd Software Engineering Internship technical assessment.
+A full-stack web application for managing shared rooms and equipment and booking them without double bookings. 
 
 ## The problem
 
